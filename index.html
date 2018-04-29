@@ -1,17 +1,76 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE>
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
-    <link rel="stylesheet" href="index.css">
-    <script src="index.js"></script>
-
+    <title>图片上传预览演示-柯乐义</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minmum-scale=1.0,maxmum-scale=1.0,user-scalable=no"/>
 </head>
 <body>
-<a href="javascript:;" class="file" id="localImag">
-    <input type="file" id="file" multiple="multiple">
-    <img src="http://www.jq22.com/img/cs/500x500-1.png" id="preImg">
-</a>
-<p id="img-box"></p>
+<div class="cbs">
+    <div class="l"><label>图片:</label></div>
+    <div>
+        <input id="idFile" name="pic" type="file" runat="server" onchange="FileChange(this.value);" />
+    </div>
+</div>
+<div class="cbs">
+    <div class="l"><label>预览:</label></div>
+    <div>
+        <img id="idImg" height="0" width="0" src="" alt="" onload="DrawImage(this);" /> //实现预览
+        <img id="showImg" width="118" height="118" alt="" runat="server" style="display:none"/>  //加这个主要是为了实现查看时显示图片，因为上面的（idImg）加上runat="server"　报错，如有好的方法可以留言
+    </div>
+</div>
+
 </body>
+<script>
+    //ajax保存数据，后台方法里实现此方法
+    function SaveData() {
+        filename = document.getElementById("idFile").value;
+        result =test_test_aspx.SaveData(filename).value;
+        if (result) {
+            alert("保存成功！");
+        }
+        return false;
+    }
+    //实现预览功能
+    function DrawImage(ImgD) {
+        var preW = 118;
+        var preH = 118;
+        var image = new Image();
+        image.src = ImgD.src;
+        if (image.width > 0 && image.height > 0) {
+            flag = true;
+            if (image.width / image.height >= preW/ preH) {
+                if (image.width > preW) {
+                    ImgD.width = preW;
+                    ImgD.height = (image.height * preW) / image.width;
+                }
+                else {
+                    ImgD.width = image.width;
+                    ImgD.height = image.height;
+                }
+                ImgD.alt = image.width + "x" + image.height;
+            }
+            else {
+                if (image.height > preH) {
+                    ImgD.height = preH;
+                    ImgD.width = (image.width * preH) / image.height;
+                }
+                else {
+                    ImgD.width = image.width;
+                    ImgD.height = image.height;
+                }
+                ImgD.alt = image.width + "x" + image.height;
+            }
+        }
+    }
+    //当idFile内容改变时
+    function FileChange(Value) {
+        flag = false;
+        document.getElementById("showImg").style.display = "none";
+        document.getElementById("idImg").width = 10;
+        document.getElementById("idImg").height = 10;
+        document.getElementById("idImg").alt = "";
+        document.getElementById("idImg").src = Value;
+    }
+</script>
 </html>
